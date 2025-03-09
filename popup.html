@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Advanced Email & Contact Extractor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      width: 380px;
+      padding: 15px;
+    }
+    h2 {
+      color: #4285f4;
+      margin-top: 0;
+    }
+    button {
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      margin: 8px 0;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #3b78e7;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .section {
+      margin-bottom: 15px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+    }
+    .count-badge {
+      display: inline-block;
+      background-color: #4285f4;
+      color: white;
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 12px;
+      margin-left: 8px;
+    }
+    #status {
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .status-success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .status-error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .status-info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .tab-container {
+      margin-top: 15px;
+    }
+    .tab-buttons {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .tab-button {
+      background-color: #f1f1f1;
+      color: #333;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      flex: 1;
+      margin: 0 2px;
+      border-radius: 4px 4px 0 0;
+    }
+    .tab-button.active {
+      background-color: #4285f4;
+      color: white;
+    }
+    .tab-content {
+      display: none;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 0 0 4px 4px;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .options-group {
+      margin-bottom: 10px;
+    }
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .checkbox-container input {
+      margin-right: 8px;
+    }
+    .progress-container {
+      width: 100%;
+      background-color: #f1f1f1;
+      border-radius: 4px;
+      margin: 8px 0;
+    }
+    .progress-bar {
+      height: 20px;
+      background-color: #4CAF50;
+      text-align: center;
+      line-height: 20px;
+      color: white;
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+    .filter-input {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      box-sizing: border-box;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .number-input {
+      width: 60px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Advanced Email & Contact Extractor</h2>
+  
+  <div class="tab-container">
+    <div class="tab-buttons">
+      <button class="tab-button active" data-tab="extract">Extract</button>
+      <button class="tab-button" data-tab="options">Options</button>
+      <button class="tab-button" data-tab="results">Results</button>
+    </div>
+    
+    <!-- Extract Tab -->
+    <div id="extract" class="tab-content active">
+      <div class="section">
+        <button id="extractBtn">Extract from Current Page</button>
+        <button id="extractSearchBtn">Extract from Search Results (Multi-page)</button>
+        <div id="progressContainer" class="progress-container" style="display: none;">
+          <div id="progressBar" class="progress-bar" style="width: 0%">0%</div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <div><strong>Statistics:</strong></div>
+        <div>Emails: <span id="emailCount">0</span></div>
+        <div>Phone Numbers: <span id="phoneCount">0</span></div>
+        <div>Social Profiles: <span id="socialCount">0</span></div>
+        <div>Pages Scanned: <span id="pagesCount">0</span></div>
+      </div>
+      
+      <div class="section">
+        <button id="exportBtn" disabled>Export to Excel (CSV)</button>
+        <button id="clearBtn">Clear All Data</button>
+      </div>
+    </div>
+    
+    <!-- Options Tab -->
+    <div id="options" class="tab-content">
+      <div class="options-group">
+        <h3>What to Extract</h3>
+        <div class="checkbox-container">
+          <input type="checkbox" id="extractEmails" checked>
+          <label for="extractEmails">Email Addresses</label>
+        </div>
+        <div class="checkbox-container">
+          <input type="checkbox" id="extractPhones" checked>
+          <label for="extractPhones">Phone Numbers</label>
+        </div>
+        <div class="checkbox-container">
+          <input type="checkbox" id="extractSocial" checked>
+          <label for="extractSocial">Social Media Profiles</label>
+        </div>
+      </div>
+      
+      <div class="options-group">
+        <h3>Search Configuration</h3>
+        <div class="checkbox-container">
+          <label for="maxPages">Max Pages to Scan:</label>
+          <input type="number" id="maxPages" class="number-input" value="5" min="1" max="20">
+        </div>
+        <div class="checkbox-container">
+          <input type="checkbox" id="followLinks" checked>
+          <label for="followLinks">Follow Links on Result Pages</label>
+        </div>
+        <div class="checkbox-container">
+          <label for="maxDepth">Max Link Depth:</label>
+          <input type="number" id="maxDepth" class="number-input" value="1" min="0" max="3">
+        </div>
+      </div>
+      
+      <div class="options-group">
+        <h3>Filters</h3>
+        <div>
+          <label for="domainFilter">Include Domains (comma separated):</label>
+          <input type="text" id="domainFilter" class="filter-input" placeholder="e.g., gmail.com, yahoo.com">
+        </div>
+        <div>
+          <label for="excludeDomainFilter">Exclude Domains (comma separated):</label>
+          <input type="text" id="excludeDomainFilter" class="filter-input" placeholder="e.g., example.com, test.com">
+        </div>
+        <div class="checkbox-container">
+          <input type="checkbox" id="removeDuplicates" checked>
+          <label for="removeDuplicates">Remove Duplicates</label>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Results Tab -->
+    <div id="results" class="tab-content">
+      <div class="section">
+        <select id="resultTypeSelect">
+          <option value="emails">Emails</option>
+          <option value="phones">Phone Numbers</option>
+          <option value="social">Social Profiles</option>
+        </select>
+        <input type="text" id="searchResults" class="filter-input" placeholder="Search results...">
+        <div id="resultsList" style="max-height: 200px; overflow-y: auto;"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="status" style="display: none;"></div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

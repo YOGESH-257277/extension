@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Advanced Email & Contact Extractor",
+  "version": "1.0",
+  "description": "Extract email addresses, phone numbers, and more",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
